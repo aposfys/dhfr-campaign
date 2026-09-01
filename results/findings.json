@@ -1,0 +1,76 @@
+{
+ "configuration": {
+  "target": "CHEMBL202",
+  "active_threshold_pchembl": 6.0,
+  "decoys_per_active": 50,
+  "pool_size": 60000,
+  "seed": 0,
+  "screen": "ligand-based max-Tanimoto to actives, leave-one-out (ECFP4/2048)",
+  "screen_not_run": "Boltz-2 co-folding with an affinity head: needs a GPU this repository has not had access to. No structure-based numbers are reported."
+ },
+ "match_report": {
+  "n_actives": 150,
+  "n_decoys": 6440,
+  "max_abs_difference": {
+   "mw": 24.99899999999991,
+   "logp": 0.9999000000000029,
+   "hbd": 1.0,
+   "hba": 2.0,
+   "rotatable_bonds": 2.0,
+   "formal_charge": 0.0
+  },
+  "unmatched_actives": [
+   "CHEMBL1201746",
+   "CHEMBL307820",
+   "CHEMBL431359",
+   "CHEMBL2153705",
+   "CHEMBL155023",
+   "CHEMBL285474",
+   "CHEMBL168069",
+   "CHEMBL18925",
+   "CHEMBL33815",
+   "CHEMBL476400",
+   "CHEMBL244883",
+   "CHEMBL1738741",
+   "CHEMBL308279",
+   "CHEMBL349572",
+   "CHEMBL396296",
+   "CHEMBL4783671",
+   "CHEMBL36739",
+   "CHEMBL284943",
+   "CHEMBL65616",
+   "CHEMBL305177",
+   "CHEMBL44919",
+   "CHEMBL371860",
+   "CHEMBL38937",
+   "CHEMBL160699",
+   "CHEMBL265757",
+   "CHEMBL280864",
+   "CHEMBL293263"
+  ],
+  "complete": false
+ },
+ "arms": [
+  {
+   "name": "property_matched",
+   "n_actives": 150,
+   "n_decoys": 6440,
+   "ef_1pct": 40.60505050505051,
+   "ef_1pct_ceiling": 43.93333333333334,
+   "ef_5pct": 18.638383838383838,
+   "bedroc_20": 0.9238053704088978,
+   "property_auc": 0.8408229813664597
+  },
+  {
+   "name": "unmatched",
+   "n_actives": 150,
+   "n_decoys": 6440,
+   "ef_1pct": 43.26767676767677,
+   "ef_1pct_ceiling": 43.93333333333334,
+   "ef_5pct": 18.77151515151515,
+   "bedroc_20": 0.9445414000732257,
+   "property_auc": 0.9128260869565217
+  }
+ ],
+ "elapsed_seconds": 88.2
+}
