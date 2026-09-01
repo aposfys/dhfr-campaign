@@ -39,3 +39,31 @@ derived independently, and failure to do so is a finding, not a footnote.
 - **Crystallographic additives are not ligands.** The earlier DHFR work already hit this:
   a DMSO cryoprotectant counted as a binding-site residue. Structure preparation strips
   additives explicitly, from a named list, and the test suite asserts the list is applied.
+
+## Layout
+
+```
+src/dhfrcamp/
+  prepare.py    structure retrieval, additive stripping, KD-tree site definition
+  decoys.py     property matching, the candidate pool, the unmatched comparison arm
+  screen.py     the ligand-based screen, and why it is the instrument here
+  campaign.py   one screen, two denominators
+  evaluate.py   enrichment factor, its ceiling, BEDROC, property separability
+  cli.py        `python -m dhfrcamp.cli`
+```
+
+`catalog.sqlite` is the ChEMBL structure catalogue built by
+[`chem-explorer`](https://github.com/aposfys/chem-explorer)'s
+`tools/build_catalog.py`. `decoys` and `evaluate` are CPU-only and reachable —
+they were previously refused with a GPU message despite being implemented.
+
+## Binding-site reproduction
+
+```
+1HFR (MOT)  7 8 9 22 30 31 34 35 59 60 61 64 67 70 115 121 136
+1KMV (LII)  7 8 9 22 30 31 34    56 59 60 61 64        115 121 136
+```
+
+Recomputed from the deposited coordinates with a KD-tree, additives stripped
+first. Arg70 appears for MOT and not for LII: only the classical antifolate's
+charged glutamate tail reaches that subsite.
