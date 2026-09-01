@@ -9,7 +9,7 @@ against the matched-decoy null rather than against a downloaded benchmark set.
 from __future__ import annotations
 
 import math
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 
 
 def enrichment_factor(labels_by_rank: Sequence[int], fraction: float = 0.01) -> float:
@@ -93,8 +93,8 @@ def max_enrichment_factor(labels_by_rank: Sequence[int], fraction: float = 0.01)
 
 
 def property_separability(
-    active_properties: Sequence[dict[str, float]],
-    decoy_properties: Sequence[dict[str, float]],
+    active_properties: Sequence[Mapping[str, float]],
+    decoy_properties: Sequence[Mapping[str, float]],
     *,
     properties: Sequence[str],
     seed: int = 0,
