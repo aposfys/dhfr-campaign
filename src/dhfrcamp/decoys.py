@@ -10,7 +10,7 @@ away.
 
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence
+from collections.abc import Collection, Mapping, Sequence
 from dataclasses import dataclass
 
 #: Properties matched between an active and its decoys. Formal charge and rotatable bond
@@ -98,10 +98,79 @@ def match_decoys(
     return assigned, report
 
 
-def generate_pool(actives: Sequence[str], *, size: int) -> dict[str, Properties]:
+def compute_properties(smiles: str) -> dict[str, float]:
+    """The six matched properties for one structure."""
+    from rdkit import Chem, RDLogger
+    from rdkit.Chem import Crippen, Descriptors, rdMolDescriptors
+
+    RDLogger.DisableLog("rdApp.*")
+    mol = Chem.MolFromSmiles(smiles)
+    if mol is None:
+        raise ValueError(f"cannot parse {smiles!r}")
+    return {
+        "mw": Descriptors.MolWt(mol),
+        "logp": Crippen.MolLogP(mol),
+        "hbd": float(rdMolDescriptors.CalcNumHBD(mol)),
+        "hba": float(rdMolDescriptors.CalcNumHBA(mol)),
+        "rotatable_bonds": float(rdMolDescriptors.CalcNumRotatableBonds(mol)),
+        "formal_charge": float(Chem.GetFormalCharge(mol)),
+    }
+
+
+def generate_pool(
+    catalogue: Sequence[tuple[str, str]],
+    exclude: Collection[str] = (),
+    *,
+    size: int = 200_000,
+    seed: int = 0,
+) -> tuple[dict[str, Properties], dict[str, str]]:
     """Draw a candidate pool from a purchasable library, excluding known DHFR binders.
 
     Excluding known binders matters: a decoy that is actually an unannotated active is
-    scored as a false positive and silently penalises the method under test.
+    scored as a false positive and silently penalises the method under test. Every
+    compound with *any* recorded DHFR activity is excluded, not only the potent ones,
+    because a weak binder in the decoy set is still not a non-binder.
+
+    ``catalogue`` is ``(id, smiles)`` pairs. Returns the pool's properties and its
+    structures, keyed by id.
     """
-    raise NotImplementedError("milestone 2: candidate pool from a purchasable library")
+    import random as _random
+
+    rng = _random.Random(seed)
+    excluded = set(exclude)
+    candidates = [(key, smiles) for key, smiles in catalogue if key not in excluded]
+    rng.shuffle(candidates)
+
+    pool: dict[str, Properties] = {}
+    structures: dict[str, str] = {}
+    for key, smiles in candidates:
+        if len(pool) >= size:
+            break
+        try:
+            pool[key] = compute_properties(smiles)
+        except ValueError:
+            continue
+        structures[key] = smiles
+    return pool, structures
+
+
+def sample_unmatched(
+    pool: Mapping[str, Properties],
+    *,
+    n: int,
+    exclude: Collection[str] = (),
+    seed: int = 0,
+) -> list[str]:
+    """Draw decoys at random, ignoring properties entirely.
+
+    This is the comparison arm, standing in for the way decoy sets were built before
+    property matching was standard. It is not a straw man -- it is what an unmatched
+    decoy set *is* -- and the gap between the enrichment it produces and the matched one
+    is the number this repository exists to report.
+    """
+    import random as _random
+
+    rng = _random.Random(seed)
+    available = [key for key in pool if key not in set(exclude)]
+    rng.shuffle(available)
+    return available[:n]
