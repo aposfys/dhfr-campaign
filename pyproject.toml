@@ -18,7 +18,16 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Bio-Informatics",
     "Topic :: Scientific/Engineering :: Chemistry",
 ]
-dependencies = ["numpy>=1.24", "requests>=2.31"]
+# rdkit and scikit-learn are base dependencies because the reported result needs both:
+# decoy matching computes descriptors, and property_separability -- the measurement the
+# campaign turns on -- is a cross-validated classifier.
+dependencies = [
+    "numpy>=1.24",
+    "requests>=2.31",
+    "rdkit>=2024.3",
+    "scikit-learn>=1.4",
+    "biopython>=1.83",
+]
 
 [project.optional-dependencies]
 chem = ["rdkit>=2024.3", "biopython>=1.80"]
