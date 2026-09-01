@@ -36,12 +36,14 @@ Recomputed here from the deposited coordinates with a KD-tree, additives strippe
 
 ```
 make install
-python3 -m dhfrcamp.cli prepare                    # structures, site definition
-python3 -m dhfrcamp.cli campaign --catalog catalog.sqlite
+dhfrcamp prepare                          # structures, site definition
+dhfrcamp campaign --catalog catalog.sqlite   # the decoy-bias experiment
+dhfrcamp decoys   --catalog catalog.sqlite   # decoy sets plus the match report
+dhfrcamp evaluate                         # print the table from an existing run
 make test
 ```
 
-`catalog.sqlite` is the ChEMBL structure catalogue built by [`chem-explorer`](https://github.com/aposfys/chem-explorer)'s `tools/build_catalog.py`. The `screen` and `generate` subcommands remain unimplemented and say so — they are the GPU half.
+`catalog.sqlite` is the ChEMBL structure catalogue built by [`chem-explorer`](https://github.com/aposfys/chem-explorer)'s `tools/build_catalog.py`. `screen` and `generate` remain unimplemented and name the GPU as the reason. `decoys` and `evaluate` are CPU-only and reachable — they were previously refused with a GPU message despite being implemented.
 
 ### Layout
 
@@ -55,9 +57,10 @@ src/dhfrcamp/
   cli.py        `python -m dhfrcamp.cli`
 ```
 
-21 tests.
+28 tests.
 
 ### More
 
+- [Analysis: what was done, and why it was done that way](ANALYSIS.md)
 - [Full results, including the residual mismatch table](results/RESULTS.md)
 - [Why DHFR, and the traps the pipeline is built to avoid](docs/DESIGN.md)
