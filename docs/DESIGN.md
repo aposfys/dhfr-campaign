@@ -52,9 +52,8 @@ src/dhfrcamp/
   cli.py        `python -m dhfrcamp.cli`
 ```
 
-`catalog.sqlite` is the ChEMBL structure catalogue built by
-[`chem-explorer`](https://github.com/aposfys/chem-explorer)'s
-`tools/build_catalog.py`. `decoys` and `evaluate` are CPU-only and reachable —
+`catalog.sqlite` is the ChEMBL structure catalogue built by this repository's own
+`tools/build_catalog.py`, which needs nothing beyond the standard library. `decoys` and `evaluate` are CPU-only and reachable —
 they were previously refused with a GPU message despite being implemented.
 
 ## Binding-site reproduction
