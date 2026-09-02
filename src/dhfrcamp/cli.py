@@ -18,7 +18,7 @@ import argparse
 import json
 from pathlib import Path
 
-from dhfrcamp import __version__
+from dhfrcamp import __version__, statistics
 
 #: Subcommands that genuinely require hardware this project has never had.
 GPU_GATED = {
@@ -78,7 +78,7 @@ def _require_catalog(path: Path) -> None:
             "chembl_36/chembl_36_chemreps.txt.gz\n"
             "  python3 tools/build_catalog.py chembl_36_chemreps.txt.gz "
             f"{path}\n"
-            "(tools/build_catalog.py lives in the chem-explorer repository.)"
+            "(tools/build_catalog.py ships with this repository.)"
         )
 
 
@@ -153,6 +153,25 @@ def main(argv: list[str] | None = None) -> int:
             print(
                 f"{arm['name']:<18} {arm['ef_1pct']:>8.2f} {arm['ef_1pct_ceiling']:>8.2f} "
                 f"{arm['bedroc_20']:>8.3f} {arm['property_auc']:>9.3f}"
+            )
+        report = statistics.bias_report(findings["arms"])
+        print("\nproperty-only AUC with uncertainty (Hanley-McNeil 95%):")
+        for name, entry in report["per_arm"].items():
+            chance = entry["vs_chance"]
+            print(
+                f"  {name:<18} {entry['auc']:.4f} "
+                f"[{entry['ci_lower']:.4f}, {entry['ci_upper']:.4f}]  "
+                f"vs chance z={chance['z']:.1f} p={chance['p_value']:.2e}"
+            )
+        effect = report.get("matching_effect")
+        if effect:
+            print(
+                f"\n  matching removes {effect['difference']:.4f} +- "
+                f"{effect['standard_error']:.4f} of property-only AUC "
+                f"(z={effect['z']:.2f}, p={effect['p_value']:.2e}), and the "
+                f"matched arm still sits "
+                f"{report['per_arm']['property_matched']['vs_chance']['excess_over_chance']:.4f} "
+                "above chance."
             )
         print(f"\nnot run: {findings['configuration']['screen_not_run']}")
         return 0

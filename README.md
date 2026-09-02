@@ -21,10 +21,12 @@ make test                                    # 28 tests
 Train a classifier on the six matched properties **alone** — no structure, no
 fingerprint — and ask it to separate actives from decoys:
 
-| Decoy set | Property-only AUC | EF 1% | Ceiling |
-| --- | ---: | ---: | ---: |
-| Unmatched | **0.913** | 43.27 | 43.93 |
-| Property-matched | **0.841** | 40.61 | 43.93 |
+| Decoy set | Property-only AUC | 95% CI | EF 1% | Ceiling |
+| --- | ---: | --- | ---: | ---: |
+| Unmatched | **0.913** | [0.882, 0.944] | 43.27 | 43.93 |
+| Property-matched | **0.841** | [0.801, 0.881] | 40.61 | 43.93 |
+
+Both halves of the claim now carry a test. **Matching does help**: it removes 0.072 ± 0.026 of property-only AUC (z = 2.79, p = 0.005, and conservative because the arms share their actives). **Matching is nowhere near sufficient**: the matched arm sits 0.341 above chance with a lower interval bound of 0.801 (z = 16.8, p = 1.7 × 10⁻⁶³). A gap that size is not a sampling artefact.
 
 At AUC 0.841 a model that never sees a molecule's structure still separates
 actives from "matched" decoys most of the time. Per-active matching inside a
@@ -57,6 +59,23 @@ The structure-based screen has not been run: Boltz-2 co-folding needs a GPU this
 repo has never had, and `screen` and `generate` name that as the reason they are
 unimplemented. What ran is a ligand-based similarity screen, used as an
 *instrument* for the decoy question rather than reported as a screening result.
+
+### Prior work
+
+Decoy-set bias has its own literature — DUD-E and its critiques, the AVE-bias line of work,
+and the general observation that a benchmark's decoys can be separated from its actives by
+signals unrelated to binding. Generating property-matched decoys rather than downloading them
+is a known recommendation, not a discovery here.
+
+What this repository contributes is the pairing of a decoy set with a **property-only AUC
+reported beside every enrichment factor**, and the demonstration that the recommendation is
+insufficient rather than merely imperfect: per-active matching inside a ±25 Da, ±1 logP box
+still leaves a classifier that never sees a structure separating actives from decoys at
+0.841 [0.801, 0.881], which is 0.341 above chance at p = 1.7 × 10⁻⁶³. Matching helps —
+0.072 ± 0.026, p = 0.005 — and does not come close to sufficing.
+
+The companion observation, that an enrichment factor quoted without its ceiling invites a
+comparison that cannot be made, is why `max_enrichment_factor` is printed beside every EF.
 
 ### More
 
