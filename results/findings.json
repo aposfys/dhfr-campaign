@@ -2,9 +2,13 @@
  "configuration": {
   "target": "CHEMBL202",
   "active_threshold_pchembl": 6.0,
+  "actives_qualifying": 714,
+  "actives_barred_from_pool": 1234,
+  "max_actives": 150,
   "decoys_per_active": 50,
   "pool_size": 60000,
   "seed": 0,
+  "run_date_utc": "2026-09-01",
   "screen": "ligand-based max-Tanimoto to actives, leave-one-out (ECFP4/2048)",
   "screen_not_run": "Boltz-2 co-folding with an affinity head: needs a GPU this repository has not had access to. No structure-based numbers are reported."
  },

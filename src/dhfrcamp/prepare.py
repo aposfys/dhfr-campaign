@@ -1,9 +1,10 @@
 """Structure retrieval and preparation for the two DHFR complexes.
 
-The binding-site definition is not recomputed from scratch. It is imported from the
-earlier `protein-ligand-interaction-pymol` work, where it was derived with a Biopython
-KD-tree and validated against the deposited SITE records at 100% recall, and this module
-must reproduce it. Failing to reproduce it is a finding.
+The binding-site definition is recomputed here from the deposited coordinates with a
+Biopython KD-tree. It is required to reproduce the earlier
+`protein-ligand-interaction-pymol` result, which used the same library and algorithm at a
+5.0 A cutoff and was validated against the deposited SITE records at 100% recall. Failing
+to reproduce it is a finding.
 """
 
 from __future__ import annotations

@@ -20,7 +20,7 @@ decoys — since one method scored against two decoy sets isolates the denominat
 | | |
 | --- | --- |
 | Target | Human DHFR (`CHEMBL202`) |
-| Actives | 150 compounds at pChEMBL ≥ 6.0 |
+| Actives | 150 compounds, a seed-0 random sample of the 714 that qualify at pChEMBL ≥ 6.0 (`--max-actives 150`) |
 | Barred from the pool | 1,234 compounds — *any* recorded DHFR potency, not just the potent ones |
 | Candidate pool | 60,000 ChEMBL structures with computed properties |
 | Decoys | 6,440 per arm, 50 per active where the pool allowed |

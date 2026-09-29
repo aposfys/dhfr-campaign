@@ -119,6 +119,10 @@ def run(
         if pchembl is not None and float(pchembl) >= ACTIVE_THRESHOLD:
             actives_smiles.setdefault(molecule_id, smiles)
 
+    # Recorded so a reader can see that the actives are a seeded sample of the
+    # compounds that qualify, not every compound that qualifies.
+    n_qualifying = len(actives_smiles)
+
     rng = random.Random(seed)
     active_ids = sorted(actives_smiles)
     rng.shuffle(active_ids)
@@ -195,9 +199,13 @@ def run(
         "configuration": {
             "target": DHFR_TARGET,
             "active_threshold_pchembl": ACTIVE_THRESHOLD,
+            "actives_qualifying": n_qualifying,
+            "actives_barred_from_pool": len(any_dhfr_activity),
+            "max_actives": max_actives,
             "decoys_per_active": decoys_per_active,
             "pool_size": len(pool_props),
             "seed": seed,
+            "run_date_utc": time.strftime("%Y-%m-%d", time.gmtime(started)),
             "screen": "ligand-based max-Tanimoto to actives, leave-one-out (ECFP4/2048)",
             "screen_not_run": (
                 "Boltz-2 co-folding with an affinity head: needs a GPU this repository "

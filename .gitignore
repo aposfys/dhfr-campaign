@@ -10,6 +10,7 @@ venv/
 .ruff_cache/
 .DS_Store
 data/*.csv
+data/*.sqlite
 data/*.parquet
 data/*.sdf
 results/models/

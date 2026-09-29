@@ -4,16 +4,16 @@ How much of a virtual screen's enrichment is manufactured by the choice of decoy
 [![CI](https://github.com/aposfys/dhfr-campaign/actions/workflows/ci.yml/badge.svg)](https://github.com/aposfys/dhfr-campaign/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-150 human DHFR actives against 6,440 decoys per arm, generated here rather than
-downloaded and matched per active on the six properties that should be irrelevant
-to binding.
+150 human DHFR actives, a seed-0 sample of the 714 that qualify at pChEMBL 6.0,
+against 6,440 decoys per arm, generated here rather than downloaded and matched per
+active on the six properties that should be irrelevant to binding.
 
 ```
 make install
 dhfrcamp prepare                             # structures, site definition
 dhfrcamp campaign --catalog catalog.sqlite   # the decoy-bias experiment
 dhfrcamp evaluate                            # print the table from an existing run
-make test                                    # 28 tests
+make test                                    # 36 tests
 ```
 
 ### Matching reduces decoy bias without removing it
@@ -76,6 +76,14 @@ still leaves a classifier that never sees a structure separating actives from de
 
 The companion observation, that an enrichment factor quoted without its ceiling invites a
 comparison that cannot be made, is why `max_enrichment_factor` is printed beside every EF.
+
+### Bundled data
+
+`data/dhfr_activities.json` is a ChEMBL activity dump for `CHEMBL202`, fetched from the
+ChEMBL web API on 2026-09-01 and redistributed here under CC BY-SA 3.0 (ChEMBL, EMBL-EBI).
+`data/pdb/1hfr.pdb` and `data/pdb/1kmv.pdb` are RCSB PDB entries 1HFR and 1KMV.
+`catalog.sqlite` is built locally from a ChEMBL chemreps dump and is not committed, and the
+release it was built from was not recorded, so the decoy pool is not byte-reproducible.
 
 ### More
 
