@@ -12,7 +12,7 @@ active on the six properties that should be irrelevant to binding.
 make install
 dhfrcamp prepare        # structures, additives stripped, site definition
 dhfrcamp evaluate       # the table below, from the committed run
-make test               # 36 tests
+make test               # 39 tests
 
 # rerunning the experiment needs a ChEMBL structure catalogue, built locally
 curl -O https://ftp.ebi.ac.uk/pub/databases/chembl/ChEMBLdb/releases/chembl_36/chembl_36_chemreps.txt.gz
@@ -79,6 +79,6 @@ release it was built from was not recorded, so the decoy pool is not byte-reprod
 
 ### More
 
-- [Analysis](ANALYSIS.md) — what was done, why it was done that way, and the prior work
+- [Analysis](ANALYSIS.md) — what was done and why it was done that way
 - [Results](results/RESULTS.md) — full results, including the residual mismatch table
 - [Design](docs/DESIGN.md) — why DHFR, and the traps this pipeline avoids

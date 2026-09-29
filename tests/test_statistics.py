@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import math
 from pathlib import Path
 
 import pytest
@@ -45,6 +46,35 @@ def test_difference_of_identical_aucs_is_null():
     result = difference(estimate, estimate)
     assert result["difference"] == 0.0
     assert result["p_value"] == pytest.approx(1.0)
+
+
+def test_perfect_separation_is_not_reported_as_chance():
+    """At AUC 1.0 the Hanley-McNeil standard error is 0.
+
+    A decoy set the properties separate perfectly is the most biased one possible, so it
+    must not come back with the p = 1.0 that a zero standard error used to produce.
+    """
+    estimate = hanley_mcneil(1.0, 150, 6440)
+    assert estimate.standard_error == 0.0
+    result = distance_from_chance(estimate)
+    assert result["excess_over_chance"] == 0.5
+    assert result["z"] == math.inf
+    assert result["p_value"] == 0.0
+
+
+def test_perfect_inverse_separation_is_not_reported_as_chance():
+    result = distance_from_chance(hanley_mcneil(0.0, 150, 6440))
+    assert result["z"] == -math.inf
+    assert result["p_value"] == 0.0
+
+
+def test_difference_between_two_degenerate_aucs_is_not_null():
+    """Both standard errors are 0 here, so the combined one is too."""
+    result = difference(hanley_mcneil(1.0, 150, 6440), hanley_mcneil(0.0, 150, 6440))
+    assert result["difference"] == 1.0
+    assert result["standard_error"] == 0.0
+    assert result["z"] == math.inf
+    assert result["p_value"] == 0.0
 
 
 def test_bias_report_requires_the_fields_it_needs():

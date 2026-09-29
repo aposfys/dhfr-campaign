@@ -55,8 +55,29 @@ def _normal_two_sided_p(z: float) -> float:
     return math.erfc(abs(z) / math.sqrt(2.0))
 
 
+def _z_score(gap: float, error: float) -> float:
+    """Deviate for a gap and its standard error, degenerate case included.
+
+    The Hanley-McNeil standard error is exactly 0 at AUC 1.0 and at AUC 0.0, where the
+    closed form has no spread left to estimate. Guarding that by returning 0.0 would
+    report a perfectly separable, and therefore maximally biased, decoy set as
+    indistinguishable from chance, which inverts the measurement this module exists for.
+    Complete separation is the furthest thing from chance, so the deviate is unbounded and
+    the two-sided p-value that follows from it is 0.
+    """
+    if error > 0.0:
+        return gap / error
+    if gap == 0.0:
+        return 0.0
+    return math.inf if gap > 0.0 else -math.inf
+
+
 def hanley_mcneil(auc: float, n_positive: int, n_negative: int) -> AucEstimate:
     """Standard error and 95% interval for a ROC AUC.
+
+    At AUC 1.0 and AUC 0.0 the closed form gives a standard error of exactly 0 and so a
+    zero-width interval. That is a property of the formula, not evidence of certainty; see
+    ``_z_score`` for how the deviates handle it.
 
     Raises:
         ValueError: if the AUC is outside [0, 1] or either class is empty.
@@ -87,7 +108,7 @@ def difference(first: AucEstimate, second: AucEstimate) -> dict[str, float]:
     """
     delta = first.auc - second.auc
     error = math.sqrt(first.standard_error**2 + second.standard_error**2)
-    z = delta / error if error else 0.0
+    z = _z_score(delta, error)
     return {
         "difference": round(delta, 4),
         "standard_error": round(error, 4),
@@ -103,7 +124,7 @@ def distance_from_chance(estimate: AucEstimate) -> dict[str, float]:
     chance the decoys are indistinguishable from the actives on the matched
     properties, and anything above it is separable without seeing a structure.
     """
-    z = (estimate.auc - 0.5) / estimate.standard_error if estimate.standard_error else 0.0
+    z = _z_score(estimate.auc - 0.5, estimate.standard_error)
     return {
         "excess_over_chance": round(estimate.auc - 0.5, 4),
         "z": round(z, 3),
