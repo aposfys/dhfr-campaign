@@ -30,7 +30,7 @@ GPU_GATED = {
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="dhfrcamp",
-        description="Retrospective virtual screening campaign against human DHFR",
+        description="Decoy-bias experiment on a retrospective DHFR virtual screen",
     )
     parser.add_argument("--version", action="version", version=f"dhfrcamp {__version__}")
     parser.add_argument("--data-dir", type=Path, default=Path("data"))

@@ -10,10 +10,14 @@ active on the six properties that should be irrelevant to binding.
 
 ```
 make install
-dhfrcamp prepare                             # structures, site definition
-dhfrcamp campaign --catalog catalog.sqlite   # the decoy-bias experiment
-dhfrcamp evaluate                            # print the table from an existing run
-make test                                    # 36 tests
+dhfrcamp prepare        # structures, additives stripped, site definition
+dhfrcamp evaluate       # the table below, from the committed run
+make test               # 36 tests
+
+# rerunning the experiment needs a ChEMBL structure catalogue, built locally
+curl -O https://ftp.ebi.ac.uk/pub/databases/chembl/ChEMBLdb/releases/chembl_36/chembl_36_chemreps.txt.gz
+python3 tools/build_catalog.py chembl_36_chemreps.txt.gz data/catalog.sqlite
+dhfrcamp campaign       # one screen, two decoy sets
 ```
 
 ### Matching reduces decoy bias without removing it

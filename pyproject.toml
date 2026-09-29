@@ -5,12 +5,12 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "dhfrcamp"
 version = "0.1.0"
-description = "Retrospective structure-based virtual screening campaign against human DHFR"
+description = "Decoy-bias experiment on a retrospective DHFR virtual screen"
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "MIT" }
 authors = [{ name = "Apostolos Fysekidis" }]
-keywords = ["drug-design", "virtual-screening", "dhfr", "boltz", "reinvent", "docking"]
+keywords = ["drug-design", "virtual-screening", "dhfr", "decoy-bias", "benchmarking"]
 classifiers = [
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: MIT License",
@@ -23,17 +23,15 @@ classifiers = [
 # campaign turns on -- is a cross-validated classifier.
 dependencies = [
     "numpy>=1.24",
-    "requests>=2.31",
     "rdkit>=2024.3",
     "scikit-learn>=1.4",
     "biopython>=1.83",
 ]
 
+# No folding or generation extra is declared. The co-folding and generation arms are
+# not implemented, so pinning boltz, torch or reinvent here would advertise a backend
+# nothing in this package imports.
 [project.optional-dependencies]
-chem = ["rdkit>=2024.3", "biopython>=1.80"]
-folding = ["boltz>=2.0", "torch>=2.2"]
-generate = ["reinvent>=4.0"]
-figures = ["matplotlib>=3.7"]
 dev = ["pytest>=7.0", "numpy>=1.24", "ruff>=0.6", "mypy>=1.11"]
 
 [project.scripts]
