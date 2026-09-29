@@ -57,18 +57,26 @@ and see whether it can tell actives from decoys.
 - Property-matched decoys: **AUC 0.841**. Better, and still nowhere near the 0.5 that
   "matched" implies.
 
-**Per-active matching within tolerances does not produce distribution-level
+**Per-active matching under this protocol does not produce distribution-level
 indistinguishability.** Each decoy sits inside a ±25 Da, ±1 logP box around its active, and
 the aggregate distributions still differ enough to be separated at 0.841. Twenty-seven of
 the 150 actives could not be given a full complement of 50 decoys from a 60,000-compound
-pool, which is the mechanism: where the pool is thin, the matcher takes what is inside the
-tolerance rather than what is closest, and the residual offsets accumulate in one direction.
+pool.
+
+Two properties of the protocol bound how far that reading goes. `match_decoys` is
+**first-fit**, accepting the first candidate inside tolerance rather than the closest, so
+some of the residual separability belongs to the matcher and to the width of the box rather
+than to per-active matching in principle. And the direction of the residual offsets is not
+measured. The table below records per-property maxima only, so a claim that the offsets run
+one way would not be supported by anything in this repository. Best-fit matching, tighter
+tolerances and a wider pool are the controls that would settle it, and none of them has been
+run.
 
 The honest conclusion is that generating your own property-matched decoys is an improvement
-over downloading DUD-E and is **not** sufficient on its own. A decoy set should be reported
-with its property-only AUC, the same way a classifier is reported with a baseline — and this
-one, at 0.841, would not yet support a claim that an enrichment measured against it reflects
-binding.
+over downloading DUD-E and, at these tolerances and with this matcher, is **not** sufficient
+on its own. A decoy set should be reported with its property-only AUC, the same way a
+classifier is reported with a baseline, and this one at 0.841 would not yet support a claim
+that an enrichment measured against it reflects binding.
 
 ## Residual mismatch
 
@@ -84,7 +92,10 @@ Largest absolute per-property difference between an active and one of its assign
 | Formal charge | 0.0 | 0.0 |
 
 Every property is pressed against its tolerance, which is itself the signal that the
-tolerances are doing the work rather than the pool supplying genuinely close matches.
+tolerances are doing the work rather than the pool supplying genuinely close matches. These
+are maxima over assigned pairs, not distributions. `findings.json` does not carry the
+assigned decoy ids, so the match is summarised here rather than re-auditable from the
+repository alone.
 
 ## The binding site reproduces the earlier work
 
@@ -101,8 +112,9 @@ and it does:
 Both recover the conserved anchors — Ile7, Glu30, Phe31, Phe34, Val115. The difference is
 the point: **Arg70 appears for MOT and not for LII**, which independently reproduces the
 earlier finding that only the classical antifolate's charged glutamate tail reaches the
-Arg70 subsite. That was derived in a different repository, by a different route, and was not
-given to this one.
+Arg70 subsite. That was derived in a separate codebase at a 4.5 Å cutoff with no residue
+list carried over to this one, though both use a Biopython KD-tree over the same contact
+criterion, so this is a reimplementation rather than a second method.
 
 ## Next
 

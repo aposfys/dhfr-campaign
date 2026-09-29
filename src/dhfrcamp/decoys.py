@@ -1,11 +1,12 @@
-"""Property-matched decoy generation, and the report that makes the match auditable.
+"""Property-matched decoy generation, and the report that summarises the match.
 
 The argument of this repo is that enrichment is only meaningful relative to a denominator
 you can inspect. DUD-E and MUV decoys carry analog bias: actives resemble each other far
 more than they resemble the decoys, so a classifier can separate them on molecular weight
 and logP alone. Decoys here are matched per active on physicochemical properties that
 should be irrelevant to binding, and the residual mismatch is reported rather than assumed
-away.
+away. What is reported is the largest absolute difference per property over assigned pairs,
+not a distribution and not the assignment itself.
 """
 
 from __future__ import annotations
@@ -67,7 +68,17 @@ def match_decoys(
 ) -> tuple[dict[str, list[str]], MatchReport]:
     """Assign decoys from ``pool`` to each active, without reusing a decoy.
 
-    Decoys are assigned exclusively: reusing one candidate across several actives would
+    Matching is **first-fit within tolerance**, not nearest-neighbour. Candidates are
+    walked in pool order and the first ``n_per_active`` that fall inside tolerance are
+    taken, with no ranking by distance, so an accepted decoy is anywhere inside the
+    tolerance box rather than as close as the pool allows. ``generate_pool`` shuffles the
+    pool under its seed, so that order is arbitrary but reproducible.
+
+    This matters for reading the residual property-only AUC: part of it belongs to this
+    matcher and to the width of the tolerance box rather than to per-active matching in
+    principle. A best-fit variant is the obvious control and has not been run.
+
+    Decoys are assigned exclusively. Reusing one candidate across several actives would
     make the decoy set look larger and more diverse than it is, which is a quieter version
     of the same bias this module exists to remove.
     """

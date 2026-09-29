@@ -1,7 +1,9 @@
 # dhfr-campaign — design notes
 
 Written before the campaign was run, so the evaluation cannot be adjusted to fit the
-results.
+results. The co-folding and generation rows below were the design intent and were never
+built, because the GPU never arrived. What ran is in
+[RESULTS.md](../results/RESULTS.md).
 
 **The question:** how much enrichment is left when the decoys are matched to the actives on
 every property except the one that should matter?
@@ -28,8 +30,12 @@ derived independently, and failure to do so is a finding, not a footnote.
 - **DUD-E and MUV decoys carry analog bias.** Actives resemble each other far more than they
   resemble the decoys, so a model can separate them on molecular weight and logP without
   learning anything about binding. This repo generates its own decoys, property-matched per
-  active, and reports the property distributions alongside the enrichment so the match is
-  auditable rather than asserted.
+  active, and reports the residual mismatch alongside the enrichment so the match is
+  summarised rather than asserted. Two limits on that. The matcher is **first-fit within
+  tolerance** rather than nearest-neighbour, so it accepts the first candidate inside the
+  ±25 Da, ±1 logP box and not the closest, and `findings.json` records per-property maxima
+  rather than distributions or the assigned decoy ids. The property-only AUC is what makes
+  the residual bias measurable here.
 - **LIT-PCBA was the fix, and was itself audited in 2025** and found to carry leakage,
   duplication and analog redundancy. Using it uncritically as the "unbiased" option is no
   longer defensible; if it is used at all, it is used as a *third* comparison, labelled.
@@ -63,6 +69,9 @@ they were previously refused with a GPU message despite being implemented.
 1KMV (LII)  7 8 9 22 30 31 34    56 59 60 61 64        115 121 136
 ```
 
-Recomputed from the deposited coordinates with a KD-tree, additives stripped
-first. Arg70 appears for MOT and not for LII: only the classical antifolate's
-charged glutamate tail reaches that subsite.
+Recomputed from the deposited coordinates with a Biopython KD-tree at a 4.5 Å
+contact cutoff, additives stripped first. Arg70 appears for MOT and not for LII,
+because only the classical antifolate's charged glutamate tail reaches that
+subsite. The earlier work used the same library and criterion at 5.0 Å, so
+agreement here is a reimplementation reproducing a result, not a second method
+confirming it.

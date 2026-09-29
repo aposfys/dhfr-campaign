@@ -33,10 +33,11 @@ An optimistic tie-break is a silent way to inflate early enrichment.
 
 **The binding site is recomputed, not imported.** `prepare.binding_site` re-derives it from
 the deposited coordinates with a KD-tree, additives stripped first, and is required to
-reproduce `protein-ligand-interaction-pymol`. It does — including **Arg70 appearing for MOT
-and not for LII**, which independently reproduces the earlier finding that only the
-classical antifolate's charged glutamate tail reaches that subsite. Derived by a different
-route, in a different repository, and not given to this one.
+reproduce `protein-ligand-interaction-pymol`. It does, including **Arg70 appearing for MOT
+and not for LII**, which reproduces the earlier finding that only the classical
+antifolate's charged glutamate tail reaches that subsite. Derived in a separate codebase at
+a 4.5 Å cutoff with no residue list carried over, but with the same library and the same
+KD-tree contact criterion, so it is a reimplementation and not a second method.
 
 ## The instrument failed, and that is reported
 
@@ -63,17 +64,38 @@ fingerprint — and ask it to separate actives from decoys:
 sees a structure still separates actives from "matched" decoys most of the time. 0.5 is what
 "matched" implies.
 
-The mechanism is visible in the residual-mismatch table: every property is pressed against
-its tolerance, and 27 of 150 actives could not be given a full 50 decoys from a
-60,000-compound pool. Where the pool is thin the matcher takes what is *within tolerance*
-rather than what is closest, and the offsets accumulate in one direction. Per-active
-matching inside a box does not give distribution-level indistinguishability.
+What the residual-mismatch table shows is that every property is pressed against its
+tolerance, and that 27 of 150 actives could not be given a full 50 decoys from a
+60,000-compound pool. The matcher is **first-fit**, taking the first candidate inside
+tolerance rather than the closest, so part of the residual 0.841 is the matcher and the box
+rather than per-active matching as an idea. The direction of the residual offsets is not
+measured. Only the per-property maxima are recorded, and each of those lands on its
+tolerance by construction. Best-fit matching, tighter tolerances and a wider pool are the
+three controls that would tell those apart, and none has been run.
 
 ## What follows
 
-Generating your own property-matched decoys beats downloading DUD-E and is not sufficient on
-its own. A decoy set should be reported with its property-only AUC, the way a classifier is
-reported with a baseline.
+Generating your own property-matched decoys beats downloading DUD-E and, under this
+protocol, is not sufficient on its own. A decoy set should be reported with its
+property-only AUC, the way a classifier is reported with a baseline.
+
+## Prior work
+
+Decoy-set bias has its own literature, DUD-E and its critiques, the AVE-bias line of work,
+and the general observation that a benchmark's decoys can be separated from its actives by
+signals unrelated to binding. Generating property-matched decoys rather than downloading
+them is a known recommendation, not a discovery here.
+
+What this repository adds is the pairing of a decoy set with a **property-only AUC reported
+beside every enrichment factor**, and one measurement of how far the recommendation gets on
+this protocol. Per-active first-fit matching inside a ±25 Da, ±1 logP box still leaves a
+classifier that never sees a structure separating actives from decoys at 0.841
+[0.801, 0.881], which is 0.341 above chance at p = 1.7 × 10⁻⁶³. Matching helps, by
+0.072 ± 0.026 at p = 0.005, and does not come close to sufficing. Whether a best-fit
+matcher inside the same box would do better is untested here.
+
+The companion observation, that an enrichment factor quoted without its ceiling invites a
+comparison that cannot be made, is why `max_enrichment_factor` is printed beside every EF.
 
 ## What would change the conclusion
 
